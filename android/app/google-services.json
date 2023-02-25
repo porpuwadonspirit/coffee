@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "82395563493",
+    "project_id": "flutter-educate-e7f31",
+    "storage_bucket": "flutter-educate-e7f31.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82395563493:android:08dc65dccaf792cb8ddb0c",
+        "android_client_info": {
+          "package_name": "com.example.coffee_shop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "82395563493-dopore9d412gndp2sioernl95idqic5v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRaVjwNidSXQtsfQEdYVkMRaR0_fJnfxs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "82395563493-dopore9d412gndp2sioernl95idqic5v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82395563493:android:59bb612121dc60748ddb0c",
+        "android_client_info": {
+          "package_name": "com.example.test_cloudbase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "82395563493-dopore9d412gndp2sioernl95idqic5v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRaVjwNidSXQtsfQEdYVkMRaR0_fJnfxs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "82395563493-dopore9d412gndp2sioernl95idqic5v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
