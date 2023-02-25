@@ -15,43 +15,27 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-   List<Product> _menuItems = [];
+  List<Product> _menuItems = [];
   late DatabaseHelper _dbHelper;
 
-  
   List<Product> _searchItems = [];
-  
-  
+
   CollectionReference product_c =
       FirebaseFirestore.instance.collection("products");
 
-  getitems() async { 
-    
-
+  getitems() async {
     QuerySnapshot data = await product_c.get();
     _menuItems = [];
     _searchItems = [];
     for (var data_f in data.docs) {
       print(data_f.data());
-      Map<String,dynamic> item = data_f.data() as Map<String,dynamic>;
+      Map<String, dynamic> item = data_f.data() as Map<String, dynamic>;
       item["id"] = data_f.id;
       _menuItems.add(Product.fromMap(item));
-       _searchItems.add(Product.fromMap(item));
+      _searchItems.add(Product.fromMap(item));
     }
-    setState(() {
-      
-    });
+    setState(() {});
   }
-  void test(BuildContext context,String id){
-    Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ProductForm(
-                            dbHelper: widget.dbHelper,id: id,
-                          )),
-                );
-  }
-
 
   @override
   void initState() {
@@ -59,6 +43,17 @@ class _MenuPageState extends State<MenuPage> {
     super.initState();
     getitems();
   }
+
+    void delete(BuildContext context,String id) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProductForm(
+                              dbHelper: widget.dbHelper,
+                              id: id,
+                            )),
+                  );
+                }
 
   ImageProvider imageProvider({File? file, String url = ''}) {
     ImageProvider? img;
@@ -95,7 +90,7 @@ class _MenuPageState extends State<MenuPage> {
           TextField(
             decoration: InputDecoration(
                 labelText: "search",
-                icon: Icon(Icons.search,color:Colors.black),
+                icon: Icon(Icons.search, color: Colors.black),
                 labelStyle: TextStyle(color: Colors.black)),
             onChanged: (value) {
               _menuItems = _searchItems
@@ -105,62 +100,82 @@ class _MenuPageState extends State<MenuPage> {
               setState(() {});
             },
           ),
-
           Expanded(
             child: ListView.builder(
               primary: true,
               itemCount: _menuItems.length,
               itemBuilder: (context, index) {
                 var item = _menuItems[index];
-                return Slidable(
-                  
-                  endActionPane: const ActionPane(
-                      motion: ScrollMotion(),
-                      children: [
-                        //  Icon(
-                        //     // An action can be bigger than the others.
-                        //     flex: 2,
-                        //     onPressed: voids(BuildContext context){},
-                        //     backgroundColor: Color(0xFF7BC043),
-                        //     foregroundColor: Colors.white,
-                        //     icon: Icons.archive,
-                        //     label: 'Archive',
-                        //   ),
-                        
-                        SlidableAction(
-                          onPressed: null,
-                            
-                          
-                          backgroundColor: Color(0xFF0392CF),
-                          foregroundColor: Colors.white,
-                          icon: Icons.save,
-                          label: 'Save',
-                        ),
+                void edit(BuildContext context) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProductForm(
+                              dbHelper: widget.dbHelper,
+                              id: item.id,
+                            )),
+                  );
+                }
+                void delete(BuildContext context) {
+                  showDialog(context: context, builder: (_){
+                    return AlertDialog(
+                      content: Text('You want to delete ${item.name}?'),
+                      actions: [
+                        // ok
+                        TextButton(
+                          onPressed: ()async{
+                          await widget.dbHelper.deleteProduct(item.id!);
+                          await getitems();
+                          Navigator.pop(_);
+                        }, child: Text('Delete',style: TextStyle(color: Colors.red))),
+                        // canell
+                        TextButton(onPressed: ()=>Navigator.pop(_), child: Text('Cancel'))
                       ],
-                    ),
+                    );
+                  });;
+                }
+                return Slidable(
+                  endActionPane: ActionPane(
+                    motion: ScrollMotion(),
+                    children: [
+
+                      SlidableAction(
+                        onPressed: edit,
+                        backgroundColor: Colors.amber,
+                        foregroundColor: Colors.white,
+                        icon: Icons.edit,
+                        label: 'Edit',
+                      ),
+                       SlidableAction(
+                        onPressed: delete,
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        icon: Icons.delete,
+                        label: 'Delete',
+                      ),
+                    ],
+                  ),
                   child: Card(
                     child: InkWell(
-                      
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             flex: 2,
                             child: Container(
-                                      width: 60,
-                                      height: 60,
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                          color: Color.fromRGBO(211, 221, 231, 1),
-                                          borderRadius: BorderRadius.circular(0),
-                                          image: DecorationImage(
-                                              image: imageProvider(
-                                                url: item.image!,
-                                              ),
-                                              onError: (err, stackTrace) => {},
-                                              fit: BoxFit.cover)),
-                  
-                                    ),
+                              width: 60,
+                              height: 60,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  color: Color.fromRGBO(211, 221, 231, 1),
+                                  borderRadius: BorderRadius.circular(0),
+                                  image: DecorationImage(
+                                      image: imageProvider(
+                                        url: item.image!,
+                                      ),
+                                      onError: (err, stackTrace) => {},
+                                      fit: BoxFit.cover)),
+                            ),
                           ),
                           Expanded(
                             flex: 6,
@@ -176,7 +191,7 @@ class _MenuPageState extends State<MenuPage> {
                                   textAlign: TextAlign.left,
                                 ),
                                 Text(
-                                 item.description!,
+                                  item.description!,
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: Colors.grey[600],
@@ -187,10 +202,9 @@ class _MenuPageState extends State<MenuPage> {
                             ),
                           ),
                           Expanded(
-                    flex: 1,
-                    child: Text('${item.price}'),
-                  ),
-                          
+                            flex: 1,
+                            child: Text('${item.price}'),
+                          ),
                         ],
                       ),
                     ),
@@ -227,4 +241,3 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 }
-

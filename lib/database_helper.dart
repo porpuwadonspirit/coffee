@@ -13,8 +13,8 @@ class DatabaseHelper {
     return await collection.doc(id).update(product.toMap());
   }
 
-  void deleteProduct(Product product) async {
-    await collection.doc(product.referenceId).delete();
+  Future<void> deleteProduct(String id) async {
+    await collection.doc(id).delete();
   }
 
   Stream<QuerySnapshot> getStream() {
