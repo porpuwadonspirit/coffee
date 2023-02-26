@@ -1,5 +1,9 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_shop/model.dart';
+import 'package:coffee_shop/report.dart';
+import 'package:coffee_shop/reportmodel.dart';
 import 'package:flutter/material.dart';
 
 class SellSystemPage extends StatefulWidget {
@@ -14,6 +18,9 @@ class _SellSystemPageState extends State<SellSystemPage> {
 
  CollectionReference product_c =
       FirebaseFirestore.instance.collection("products");
+
+  CollectionReference report_c =
+      FirebaseFirestore.instance.collection("report");
 
  
   getitems() async { 
@@ -38,11 +45,11 @@ class _SellSystemPageState extends State<SellSystemPage> {
     getitems();
   }
 
-  List<Product> _cart = [];
+  List<ItemsProduct> _cart = [];
 
   double _total = 0;
 
-  void _addToCart(Product product) {
+  void _addToCart(ItemsProduct product) {
     setState(() {
       _cart.add(product);
       _total += product.price!;
@@ -62,7 +69,11 @@ class _SellSystemPageState extends State<SellSystemPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Sell System'),
-        
+        actions: [
+          IconButton(onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (_)=>Report()));
+          }, icon: Icon(Icons.history))
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -91,7 +102,12 @@ class _SellSystemPageState extends State<SellSystemPage> {
                     trailing: IconButton(
                       icon: Icon(Icons.add_shopping_cart),
                       onPressed: () {
-                        _addToCart(product);
+                        _addToCart(ItemsProduct(
+                          name: product.name,
+                          price: product.price,
+                          id: product.id,
+                          qty: 1,
+                        ));
                       },
                     ),
                   ),
@@ -177,7 +193,18 @@ class _SellSystemPageState extends State<SellSystemPage> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async{
+                      Random random = Random();
+                      ReportModel item = ReportModel(
+                        id: random.nextInt(999).toString(),
+                        date: DateTime.now().toString(),
+                        items: _cart
+                      );
+                      await report_c.doc().set(item.toMap());
+                      // 
+                      _cart = [];
+                      _total = 0;
+                      setState(() {});
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(

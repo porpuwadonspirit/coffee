@@ -163,44 +163,56 @@ class _ProductFormState extends State<ProductForm> {
                     Container(
                       margin: const EdgeInsets.all(20),
                       child: ElevatedButton(
-                          child:  Text(widget.id == null?'Add':"Update"),
+                          child: Text(widget.id == null ? 'Add' : "Update"),
                           onPressed: () async {
-                            if (images != null) {
-                              _image.text = await uploadImage(
-                                  file: images,
-                                  location: "IMGProoducts",
-                                  prefix: "Prd");
-                            }
-                            Product newProduct = Product(
-                                name: _name.text,
-                                description: _description.text,
-                                price: double.parse(_price.text),
-                                favorite: 0,
-                                image: _image.text,
-                                referenceId: null);
-                            if (widget.id == null) {
-                              await widget.dbHelper
-                                  .insertProduct(newProduct)
-                                  .then((value) =>
-                                      newProduct.referenceId = value.id);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      '${newProduct.name} is inserted complete...'),
-                                ),
-                              );
-                            }else {
-                              await widget.dbHelper.updateProduct(widget.id!,newProduct).then(
-                                    (value) => newProduct.referenceId = widget.id);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          '${newProduct.name} is update complete...'),
-                                        ),
-                                    );
+                            if (_name.text.isNotEmpty && _description.text.isNotEmpty && _price.text.isNotEmpty) {
+                              if (images != null) {
+                                _image.text = await uploadImage(
+                                    file: images,
+                                    location: "IMGProoducts",
+                                    prefix: "Prd");
+                              }
+                              Product newProduct = Product(
+                                  name: _name.text,
+                                  description: _description.text,
+                                  price: double.parse(_price.text),
+                                  favorite: 0,
+                                  image: _image.text,
+                                  referenceId: null);
+                              if (widget.id == null) {
+                                await widget.dbHelper
+                                    .insertProduct(newProduct)
+                                    .then((value) =>
+                                        newProduct.referenceId = value.id);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        '${newProduct.name} is inserted complete...'),
+                                  ),
+                                );
+                              } else {
+                                await widget.dbHelper
+                                    .updateProduct(widget.id!, newProduct)
+                                    .then((value) =>
+                                        newProduct.referenceId = widget.id);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        '${newProduct.name} is update complete...'),
+                                  ),
+                                );
+                              }
+
+                              Navigator.pop(context);
+                            }else{
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        'ErorForm'),
+                                  ),
+                                );
                             }
 
-                            Navigator.pop(context);
                           }),
                     ),
                   ],

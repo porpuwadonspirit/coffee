@@ -110,11 +110,12 @@ class _MenuPageState extends State<MenuPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ProductForm(
+                        builder: (context) =>  ProductForm(
                               dbHelper: widget.dbHelper,
                               id: item.id,
                             )),
-                  );
+                  ).then((value) => getitems()); 
+
                 }
                 void delete(BuildContext context) {
                   showDialog(context: context, builder: (_){
